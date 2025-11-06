@@ -59,6 +59,19 @@ export const getUsers = async (req, res) => {
   }
 };
 
+// get all students
+export const getStudents = async (req, res) => {
+  try {
+    const students = await User.find({ role: "student" }).populate(
+      "coursesEnrolled",
+      "title description price"
+    );
+    res.json(students);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // ✅ GET LOGGED-IN USER PROFILE
 export const getProfile = async (req, res) => {
   try {

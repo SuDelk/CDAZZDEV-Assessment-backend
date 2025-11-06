@@ -6,6 +6,7 @@ import {
   updateUser,
   deleteUser,
   getProfile,
+  getStudents,
 } from "../controllers/auth.controller.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
 
@@ -86,6 +87,15 @@ router.get("/profile", verifyToken, getProfile);
  *     tags: [Authentication]
  */
 router.get("/", getUsers);
+
+/**
+ * @swagger
+ * /api/auth/students:
+ *   get:
+ *     summary: Get all students
+ *     tags: [Authentication]
+ */
+router.get("/students", getStudents);
 
 /**
  * @swagger
