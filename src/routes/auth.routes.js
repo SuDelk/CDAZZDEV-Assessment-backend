@@ -5,7 +5,9 @@ import {
   getUsers,
   updateUser,
   deleteUser,
+  getProfile,
 } from "../controllers/auth.controller.js";
+import { verifyToken } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -61,6 +63,20 @@ router.post("/register", register);
  *         description: Login successful
  */
 router.post("/login", login);
+
+/**
+ * @swagger
+ * /api/auth/profile:
+ *   get:
+ *     summary: Get logged-in user's profile
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Authentication]
+ *     responses:
+ *       200:
+ *         description: Returns user profile
+ */
+router.get("/profile", verifyToken, getProfile);
 
 /**
  * @swagger

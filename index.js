@@ -25,9 +25,24 @@ const swaggerOptions = {
       description: "API documentation for Online Learning Platform",
     },
     servers: [{ url: "http://localhost:" + process.env.PORT }],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
   },
-  apis: ["./src/routes/*.js"], // points to all route files
+  apis: ["./src/routes/*.js"], // path to route files
 };
+
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
