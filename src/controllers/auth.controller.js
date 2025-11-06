@@ -16,25 +16,37 @@ export const register = async (req, res) => {
   }
 };
 
-// READ (Login)
+//login
 export const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user || !(await user.comparePassword(password)))
-      return res.status(400).json({ message: "Invalid credentials" });
+  const { email, password } = req.body;
 
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "7d",
-      }
-    );
-    res.json({ token, user });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  // ✅ Find user in DB
+  const user = await User.findOne({ email });
+  if (!user || !(await user.comparePassword(password))) {
+    return res.status(401).json({ message: "Invalid email or password" });
   }
+
+  // 🔒 Admin login validation
+  let isAdminLogin = req.headers["x-admin-login"] == "true";
+  if (isAdminLogin && user.role !== "admin") {
+    return res.status(403).json({ message: "Access denied. Admins only." });
+  }
+  if (!isAdminLogin && user.role === "admin") {
+    return res.status(403).json({ message: "Access denied. Use admin login." });
+  }
+
+  // ✅ Create JWT with role info
+  const token = jwt.sign(
+    { id: user._id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  res.status(200).json({
+    message: `${user.role === "admin" ? "Admin" : "User"} login successful`,
+    token,
+    role: user.role,
+  });
 };
 
 // READ (All users - Admin)
