@@ -6,12 +6,18 @@ import {
   updateEnrollment,
   deleteEnrollment,
 } from "../controllers/enrollment.controller.js";
+import { verifyToken } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
 /**
  * @swagger
  * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  *   schemas:
  *     Enrollment:
  *       type: object
@@ -60,6 +66,8 @@ const router = express.Router();
  *   get:
  *     summary: Get all enrollments
  *     tags: [Enrollments]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of all enrollments
@@ -69,10 +77,12 @@ const router = express.Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Enrollment'
+ *       401:
+ *         description: Unauthorized - invalid or missing token
  *       500:
  *         description: Server error
  */
-router.get("/", getEnrollments);
+router.get("/", verifyToken, getEnrollments);
 
 /**
  * @swagger
@@ -80,6 +90,8 @@ router.get("/", getEnrollments);
  *   get:
  *     summary: Get enrollment by ID
  *     tags: [Enrollments]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -94,12 +106,14 @@ router.get("/", getEnrollments);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Enrollment'
+ *       401:
+ *         description: Unauthorized - invalid or missing token
  *       404:
  *         description: Enrollment not found
  *       500:
  *         description: Server error
  */
-router.get("/:id", getEnrollmentById);
+router.get("/:id", verifyToken, getEnrollmentById);
 
 /**
  * @swagger
@@ -107,6 +121,8 @@ router.get("/:id", getEnrollmentById);
  *   post:
  *     summary: Create a new enrollment (Enroll a student in a course)
  *     tags: [Enrollments]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -140,12 +156,14 @@ router.get("/:id", getEnrollmentById);
  *               $ref: '#/components/schemas/Enrollment'
  *       400:
  *         description: Already enrolled or validation error
+ *       401:
+ *         description: Unauthorized - invalid or missing token
  *       404:
  *         description: User or course not found
  *       500:
  *         description: Server error
  */
-router.post("/", createEnrollment);
+router.post("/", verifyToken, createEnrollment);
 
 /**
  * @swagger
@@ -153,6 +171,8 @@ router.post("/", createEnrollment);
  *   put:
  *     summary: Update enrollment details (e.g., status)
  *     tags: [Enrollments]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -179,12 +199,14 @@ router.post("/", createEnrollment);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Enrollment'
+ *       401:
+ *         description: Unauthorized - invalid or missing token
  *       404:
  *         description: Enrollment not found
  *       500:
  *         description: Server error
  */
-router.put("/:id", updateEnrollment);
+router.put("/:id", verifyToken, updateEnrollment);
 
 /**
  * @swagger
@@ -192,6 +214,8 @@ router.put("/:id", updateEnrollment);
  *   delete:
  *     summary: Delete an enrollment
  *     tags: [Enrollments]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -202,11 +226,13 @@ router.put("/:id", updateEnrollment);
  *     responses:
  *       200:
  *         description: Enrollment deleted successfully
+ *       401:
+ *         description: Unauthorized - invalid or missing token
  *       404:
  *         description: Enrollment not found
  *       500:
  *         description: Server error
  */
-router.delete("/:id", deleteEnrollment);
+router.delete("/:id", verifyToken, deleteEnrollment);
 
 export default router;

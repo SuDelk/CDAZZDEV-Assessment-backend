@@ -70,12 +70,14 @@ router.post("/login", login);
  * /api/auth/profile:
  *   get:
  *     summary: Get logged-in user's profile
+ *     tags: [Authentication]
  *     security:
  *       - bearerAuth: []
- *     tags: [Authentication]
  *     responses:
  *       200:
  *         description: Returns user profile
+ *       401:
+ *         description: Unauthorized - invalid or missing token
  */
 router.get("/profile", verifyToken, getProfile);
 
@@ -85,8 +87,15 @@ router.get("/profile", verifyToken, getProfile);
  *   get:
  *     summary: Get all users (Admin only)
  *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Returns list of all users
+ *       401:
+ *         description: Unauthorized - invalid or missing token
  */
-router.get("/", getUsers);
+router.get("/", verifyToken, getUsers);
 
 /**
  * @swagger
@@ -94,8 +103,15 @@ router.get("/", getUsers);
  *   get:
  *     summary: Get all students
  *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Returns list of all students
+ *       401:
+ *         description: Unauthorized - invalid or missing token
  */
-router.get("/students", getStudents);
+router.get("/students", verifyToken, getStudents);
 
 /**
  * @swagger
@@ -103,13 +119,32 @@ router.get("/students", getStudents);
  *   put:
  *     summary: Update a user by ID
  *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name: { type: string }
+ *               email: { type: string }
+ *               role: { type: string, enum: [student, admin] }
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *       401:
+ *         description: Unauthorized - invalid or missing token
+ *       404:
+ *         description: User not found
  */
-router.put("/:id", updateUser);
+router.put("/:id", verifyToken, updateUser);
 
 /**
  * @swagger
@@ -117,12 +152,21 @@ router.put("/:id", updateUser);
  *   delete:
  *     summary: Delete a user by ID
  *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *       401:
+ *         description: Unauthorized - invalid or missing token
+ *       404:
+ *         description: User not found
  */
-router.delete("/:id", deleteUser);
+router.delete("/:id", verifyToken, deleteUser);
 
 export default router;

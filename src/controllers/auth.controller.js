@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
+import Enrollment from "../models/enrollment.model.js";
 
 // CREATE (Register)
 export const register = async (req, res) => {
@@ -46,6 +47,7 @@ export const login = async (req, res) => {
     message: `${user.role === "admin" ? "Admin" : "User"} login successful`,
     token,
     role: user.role,
+    userId: user._id,
   });
 };
 
@@ -76,7 +78,9 @@ export const getStudents = async (req, res) => {
 export const getProfile = async (req, res) => {
   try {
     const userId = req.user.id; // comes from middleware
-    const user = await User.findById(userId).select("-password");
+    const user = await User.findById(userId)
+      .select("-password")
+      .populate("coursesEnrolled", "title description price");
     if (!user) return res.status(404).json({ message: "User not found" });
 
     res.json({ message: "Profile fetched successfully", user });
@@ -99,11 +103,20 @@ export const updateUser = async (req, res) => {
   }
 };
 
+
+
 // DELETE (Admin)
 export const deleteUser = async (req, res) => {
   try {
-    await User.findByIdAndDelete(req.params.id);
-    res.json({ message: "User deleted" });
+    const userId = req.params.id;
+
+    // Delete the user
+    await User.findByIdAndDelete(userId);
+
+    // Delete all enrollments associated with the user
+    await Enrollment.deleteMany({ userId });
+
+    res.json({ message: "User and related enrollments deleted" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
