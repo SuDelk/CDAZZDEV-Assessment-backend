@@ -394,5 +394,3 @@ If you encounter any issues or have questions:
 3. Create a new issue if your problem isn't already listed
 
 ---
-
-**Happy Coding! 🚀**
