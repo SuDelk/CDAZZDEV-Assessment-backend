@@ -53,6 +53,7 @@ A comprehensive RESTful API backend for an online learning management system bui
 - **API Documentation**: Swagger (swagger-jsdoc, swagger-ui-express)
 - **CORS**: Enabled for cross-origin requests
 - **Environment Variables**: dotenv
+- **Testing**: Jest with Supertest
 - **Development**: nodemon (auto-restart on changes)
 
 ## 📦 Prerequisites
@@ -346,9 +347,56 @@ npm start
 # Start the server in development mode with auto-restart
 npm run dev
 
-# Run tests (not yet implemented)
+# Run all tests
 npm test
+
+# Run tests in watch mode (auto-rerun on file changes)
+npm run test:watch
+
+# Run tests with coverage report
+npm run test:coverage
 ```
+
+### Running Tests
+
+This project uses **Jest** as the testing framework. The test suite includes unit tests for controllers and other components.
+
+#### Test Commands
+
+- **Run all tests**: Execute the full test suite
+  ```bash
+  npm test
+  ```
+  This runs all test files (`.test.js`) in the `tests/` directory using Jest.
+
+- **Watch mode**: Automatically re-run tests when files change
+  ```bash
+  npm run test:watch
+  ```
+  Useful during development for continuous testing feedback.
+
+- **Coverage report**: Generate a code coverage report
+  ```bash
+  npm run test:coverage
+  ```
+  Creates a detailed coverage report showing which lines of code are tested.
+
+#### Test Structure
+
+The tests are organized in the `tests/` directory:
+```
+tests/
+├── setup/              # Test configuration
+├── unit/               # Unit tests
+│   ├── auth.controller.test.js
+│   ├── course.controller.test.js
+│   └── enrollment.controller.test.js
+```
+
+The test suite includes:
+- **Unit Tests**: Test individual controllers and functions in isolation
+- **Mock Data**: Uses mocked dependencies to ensure tests are fast and reliable
+- **In-Memory Database**: Tests use MongoDB Memory Server for database operations
 
 ### Development Workflow
 
